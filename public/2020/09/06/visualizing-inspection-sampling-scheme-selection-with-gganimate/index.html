@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.74.3" />
+
+
+<title>Visualizing Inspection Sampling Scheme Selection with gganimate - Carter&#39;s Website</title>
+<meta property="og:title" content="Visualizing Inspection Sampling Scheme Selection with gganimate - Carter&#39;s Website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/CP_Logo3.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/carterportwood">GitHub</a></li>
+    
+    <li><a href="https://www.linkedin.com/in/carter-portwood/">LinkedIn</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">Visualizing Inspection Sampling Scheme Selection with gganimate</h1>
+
+    
+    <span class="article-date">2020-09-06</span>
+    
+
+    <div class="article-content">
+      
+
+
+<p>It’s common in the world of quality inspection to assess the proportion of defects produced by a process. To accept or reject a lot, acceptance sampling is often used. For a binary outcome like ‘defect’/‘not defect’, this takes the form of randomly sampling <span class="math inline">\(n\)</span> items and counting the number of defects, <span class="math inline">\(x\)</span>. The lot or process passes if <span class="math inline">\(x \le c\)</span> and is rejected otherwise, where <span class="math inline">\(c\)</span> is the maximum number of allowable defects.</p>
+<p>This can all be re-framed as hypothesis testing. Let
+<span class="math display">\[H_0: p \le AQL\]</span>
+<span class="math display">\[H_A: p \gt AQL\]</span>
+such that passing <span class="math inline">\(AQL\)</span> is an acceptable defect rate, so we want to pass if <span class="math inline">\(p=AQL\)</span>. We limit the probability of failing at <span class="math inline">\(p=AQL\)</span> to <span class="math inline">\(\alpha\)</span>.</p>
+<p>Now let <span class="math inline">\(LQL\)</span> be an unacceptable defect rate, such that we want to fail at <span class="math inline">\(p=LQL\)</span>. We limit this probability to <span class="math inline">\(\beta\)</span>, i.e.
+<span class="math inline">\(\beta = P(X \le c \ |\ p = LQL)\)</span>. In other words, our power at <span class="math inline">\(p=LQL\)</span> is <span class="math inline">\(1-\beta\)</span>. Once we set <span class="math inline">\(LQL\)</span>, <span class="math inline">\(AQL\)</span>, <span class="math inline">\(\alpha\)</span>, and <span class="math inline">\(\beta\)</span>, we can determine the necessary sample size, <span class="math inline">\(n\)</span>, and acceptance criterion, <span class="math inline">\(c\)</span>. This can all be best visualized through what is called an Operating Characteristic (OC) curve. An OC curve plots <span class="math inline">\(P(X \le c\ |\ p)\)</span> against <span class="math inline">\(p\)</span> for a given <span class="math inline">\(n\)</span> and <span class="math inline">\(c\)</span>. In hypothesis testing terms, this is <span class="math inline">\(1-\beta(p)\)</span>. Here’s the OC curve for a sampling plan with <span class="math inline">\(n = 20\)</span> and <span class="math inline">\(c=2\)</span>.</p>
+<pre class="r"><code>library(tidyverse)
+
+plan = tibble(n=20, c=2)
+
+df.plot = plan %&gt;%
+  expand_grid(
+    p = seq(0, 1, 0.005)
+  ) %&gt;%
+  mutate(
+    p.pass = pbinom(c, n, p)
+  )
+
+df.plot %&gt;%
+  ggplot(aes(x=p, y=p.pass)) +  
+  geom_line() +
+  theme_minimal() +
+  labs(title = &#39;OC Curve&#39;, 
+       subtitle = &#39;c: 2, n: 20&#39;) + 
+  ylab(&#39;P(X &lt; c | p)&#39;)</code></pre>
+<p><img src="/post/2015-09-30_AQL_LQL_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p>Quality inspection seems to be one of many fields that has its own statistics dialect developed in partial isolation from mainstream statistics. AQL and LQL sampling plans were popularized by the US military in the 1940s and 50s in the format of lookup tables for <span class="math inline">\(n\)</span> and <span class="math inline">\(c\)</span>. They’re still often presented in unnecessarily complex and confusing tables, a relic from the 1940s. Google “ANSI ASQ Z1.4” for an example of a simple concept made confusing.</p>
+<p>The <code>SSPDesignBinomial</code> function in the <code>Dodge</code> package in R computes <span class="math inline">\(n\)</span> and <span class="math inline">\(c\)</span> for any combination of <span class="math inline">\(LQL\)</span>, <span class="math inline">\(AQL\)</span>, <span class="math inline">\(\alpha\)</span>, and <span class="math inline">\(\beta\)</span>. For instance, inputting <span class="math inline">\(AQL=2.5\%, LQL=10\%, \alpha=\beta=5\%\)</span> gives the following output:</p>
+<pre class="r"><code>library(Dodge)
+AQL = 0.025
+alpha = 0.05
+LQL = 0.1
+beta = 0.05
+SSPDesignBinomial(AQL, alpha, LQL, beta)
+##     n Ac
+## 1 103  5</code></pre>
+<p>What is SSPDesignBinomial doing under the hood? I unpacked the SSPDesignBinomial code to pull out record each iteration and plot it. Below I show the OC curve as the algorithm iterates.</p>
+<p><img src="/post/2015-09-30_AQL_LQL_files/figure-html/unnamed-chunk-3-1.gif" /><!-- --></p>
+<p>If you watch closely, you can see what’s going on. <span class="math inline">\(n\)</span> increases until the OC curve drops below <span class="math inline">\(\beta\)</span> at the LQL. Then, if the OC curve has dropped below <span class="math inline">\(1-\alpha\)</span> at the AQL, the acceptance criteria is increased. Below is the code used to generate the animated plot.</p>
+<pre class="r"><code>library(gganimate)
+library(gapminder)
+
+nl = function(Ac, LQL, beta) {
+    n = 1
+    while (pbinom(Ac, n, LQL) &gt;= beta) {
+        n = n + 1
+    }
+    n
+}
+nu = function(Ac, AQL, alpha) {
+    n = 1
+    while (pbinom(Ac, n, AQL) &gt;= 1 - alpha) {
+        n = n + 1
+    }
+    n
+}
+
+
+aql_lql = function (AQL, alpha, LQL, beta) {
+  m = 40
+  # Pre-allocate
+  results = data.frame(nlql = rep(NA, m), naql = rep(NA, m), c = rep(NA, m))
+  # Initialize
+  Ac = 0
+  i = 1
+  nlql = nl(Ac, LQL, beta)
+  naql = nu(Ac, AQL, alpha)
+  results[i, &#39;nlql&#39;] = nlql
+  results[i, &#39;naql&#39;] = naql
+  results[i, &#39;c&#39;] = Ac
+  more_c = nlql &gt; naql
+  while (more_c) {
+    i = i + 1
+    Ac = Ac + 1
+    nlql = nl(Ac, LQL, beta)
+    naql = nu(Ac, AQL, alpha)
+    # Record iteration
+    results[i, &#39;nlql&#39;] = nlql
+    results[i, &#39;naql&#39;] = naql
+    results[i, &#39;c&#39;] = Ac
+    more_c = nlql &gt; naql
+  }
+  n = nl(Ac, LQL, beta)
+  results[i, &#39;nlql&#39;] = n
+  results[i, &#39;naql&#39;] = naql
+  results[i, &#39;c&#39;] = Ac
+  return(results)
+}
+
+
+res = aql_lql(AQL, alpha, LQL, beta)
+
+res = drop_na(res)
+
+df.anim = tibble(
+  n = seq(1, max(res$nlql))
+) %&gt;%
+  rowwise() %&gt;%
+  mutate(
+    c = min(filter(res, n &lt;= res$nlql)$c),
+  ) %&gt;% 
+  expand_grid(
+    p = seq(0, 1, 0.005)
+  ) %&gt;%
+  mutate(
+    p.pass = pbinom(c, n, p)
+  )
+
+xlim = 0.175
+df.anim %&gt;%
+  filter(p &lt;= xlim) %&gt;%
+  mutate(state = paste(paste(&#39;n=&#39;, n), paste(&#39;c=&#39;, c), sep=&#39;, &#39;)) %&gt;%
+  ggplot(aes(x=p, y=p.pass)) +  
+  geom_line() +
+  theme_minimal() +
+  xlim(0, xlim) +
+  geom_segment(aes(x=LQL, y=0, yend=beta, xend=LQL), 
+               lty=2, alpha = 0.5, color=&#39;red&#39;) +
+  geom_segment(aes(x=0, y=beta, yend=beta, xend=LQL), 
+               lty=2, alpha = 0.5, color=&#39;red&#39;) +
+  geom_segment(aes(x=AQL, y=0, yend=1-alpha, xend=AQL), 
+               lty=2, alpha = 0.5, color=&#39;skyblue&#39;) +
+  geom_segment(aes(x=0, y=1-alpha, yend=1-alpha, xend=AQL), 
+               lty=2, alpha = 0.5, color=&#39;skyblue&#39;)+
+  labs(title = &#39;OC Curve&#39;, 
+       subtitle = &#39;c: {df.anim$c[df.anim$n == frame][1]}, n: {frame}&#39;) + 
+  ylab(&#39;P(X &lt; c | p)&#39;) + 
+  transition_manual(n)</code></pre>
+<div id="references" class="section level1">
+<h1>References</h1>
+<ol style="list-style-type: decimal">
+<li>A. Jonathan R. Godfrey and K. Govindaraju (2018). Dodge: Functions for acceptance sampling
+ideas originated by H.F. Dodge. R package version 0.9-2.</li>
+</ol>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.74.3" />
+
+
+<title>Animating AQL/LQL Sampling Scheme Selection with  - Carter&#39;s Website</title>
+<meta property="og:title" content="Animating AQL/LQL Sampling Scheme Selection with  - Carter&#39;s Website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/rstudio/blogdown">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/carterportwood">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">3 min read</span>
+    
+
+    <h1 class="article-title">Animating AQL/LQL Sampling Scheme Selection with </h1>
+
+    
+    <span class="article-date">2020-09-06</span>
+    
+
+    <div class="article-content">
+      
+
+
+<p>It’s common in the world of quality inspection to assess the proportion of defects produced by a process. To accept or reject a lot or process, acceptance sampling is often used. For a binary outcome like ‘defect’/‘not defect’, this takes the form of randomly sampling <span class="math inline">\(n\)</span> items and counting the number of defects, <span class="math inline">\(x\)</span>. The lot or process passes if <span class="math inline">\(x \le c\)</span> and is rejected otherwise, where <span class="math inline">\(c\)</span> is the maximum number of allowable defects.</p>
+<p>This can all be re-framed as hypothesis testing, although it’s not typically spoken of as such. Let
+<span class="math display">\[ H_0: p \le AQL\]</span>
+<span class="math display">\[ H_A: p \gt AQL\]</span>
+such that <span class="math inline">\(1 - \alpha = P(X \le c \ |\ p = AQL)\)</span>. <span class="math inline">\(AQL\)</span> is an acceptable defect rate, so we want to pass if <span class="math inline">\(p=AQL\)</span>. We limit the probability of failing at <span class="math inline">\(p=AQL\)</span> to <span class="math inline">\(\alpha\)</span>.</p>
+<p>Now let <span class="math inline">\(LQL\)</span> be an unacceptable defect rate, such that we want to fail at <span class="math inline">\(p=LQL\)</span>. We limit this probability to <span class="math inline">\(\beta\)</span>, i.e.
+<span class="math inline">\(\beta = P(X \le c \ |\ p = LQL)\)</span>. In other words, our power at <span class="math inline">\(p=LQL\)</span> is <span class="math inline">\(1-\beta\)</span>. Once we set <span class="math inline">\(LQL\)</span>, <span class="math inline">\(AQL\)</span>, <span class="math inline">\(\alpha\)</span>, and <span class="math inline">\(\beta\)</span>, we can determine the necessary sample size, <span class="math inline">\(n\)</span>, and acceptance criterion, <span class="math inline">\(c\)</span>.</p>
+<pre class="r"><code>library(gganimate)
+library(gapminder)
+library(tidyverse)
+
+
+nl = function(Ac, LQL, beta) {
+    n = 1
+    while (pbinom(Ac, n, LQL) &gt;= beta) {
+        n = n + 1
+    }
+    n
+}
+nu = function(Ac, AQL, alpha) {
+    n = 1
+    while (pbinom(Ac, n, AQL) &gt;= 1 - alpha) {
+        n = n + 1
+    }
+    n
+}
+
+
+aql_lql = function (AQL, alpha, LQL, beta) {
+  m = 40
+  results = data.frame(nlql = rep(NA, m), naql = rep(NA, m), c = rep(NA, m))
+  Ac = 0
+  i = 1
+  nlql = nl(Ac, LQL, beta)
+  naql = nu(Ac, AQL, alpha)
+  results[i, &#39;nlql&#39;] = nlql
+  results[i, &#39;naql&#39;] = naql
+  results[i, &#39;c&#39;] = Ac
+  more_c = nlql &gt; naql
+  while (more_c) {
+    i = i + 1
+    Ac = Ac + 1
+    nlql = nl(Ac, LQL, beta)
+    naql = nu(Ac, AQL, alpha)
+    results[i, &#39;nlql&#39;] = nlql
+    results[i, &#39;naql&#39;] = naql
+    results[i, &#39;c&#39;] = Ac
+    more_c = nlql &gt; naql
+  }
+  n = nl(Ac, LQL, beta)
+  results[i, &#39;nlql&#39;] = n
+  results[i, &#39;naql&#39;] = naql
+  results[i, &#39;c&#39;] = Ac
+  return(results)
+  #return(data.frame(n, Ac))
+}
+
+AQL = 0.025
+alpha = 0.05
+LQL = 0.1
+beta = 0.05
+res = aql_lql(AQL, alpha, LQL, beta)
+
+res = drop_na(res)
+
+df.anim = tibble(
+  n = seq(1, max(res$nlql))
+) %&gt;%
+  rowwise() %&gt;%
+  mutate(
+    c = min(filter(res, n &lt;= res$nlql)$c),
+  ) %&gt;% 
+  expand_grid(
+    p = seq(0, 1, 0.005)
+  ) %&gt;%
+  mutate(
+    p.pass = pbinom(c, n, p)
+  )
+
+xlim = 0.175
+df.anim %&gt;%
+  filter(p &lt;= xlim) %&gt;%
+  mutate(state = paste(paste(&#39;n=&#39;, n), paste(&#39;c=&#39;, c), sep=&#39;, &#39;)) %&gt;%
+  ggplot(aes(x=p, y=p.pass)) +  
+  geom_line() +
+  xlim(0, xlim) +
+  #geom_point(alpha=0.2) +
+  geom_segment(aes(x=LQL, y=0, yend=beta, xend=LQL), 
+               lty=2, alpha = 0.5, color=&#39;red&#39;, lwd=1) +
+  geom_segment(aes(x=0, y=beta, yend=beta, xend=LQL), 
+               lty=2, alpha = 0.5, color=&#39;red&#39;, lwd=1) +
+  geom_segment(aes(x=AQL, y=0, yend=1-alpha, xend=AQL), 
+               lty=2, alpha = 0.5, color=&#39;skyblue&#39;, lwd=1) +
+  geom_segment(aes(x=0, y=1-alpha, yend=1-alpha, xend=AQL), 
+               lty=2, alpha = 0.5, color=&#39;skyblue&#39;, lwd=1)+
+  labs(title = &#39;OC Curve&#39;, 
+       subtitle = &#39;c: {df.anim$c[df.anim$n == frame][1]}, n: {frame}&#39;) + 
+  ylab(&#39;P(X &lt; c | p)&#39;) + 
+  transition_manual(n)</code></pre>
+<p><img src="/post/2015-07-23-r-rmarkdown_files/figure-html/unnamed-chunk-1-1.gif" /><!-- --></p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

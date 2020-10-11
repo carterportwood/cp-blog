@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.74.3" />
+
+
+<title>How to Choose What Binomial Confidence Interval Method to Choose - Carter&#39;s Website</title>
+<meta property="og:title" content="How to Choose What Binomial Confidence Interval Method to Choose - Carter&#39;s Website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/rstudio/blogdown">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/carterportwood">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">1 min read</span>
+    
+
+    <h1 class="article-title">How to Choose What Binomial Confidence Interval Method to Choose</h1>
+
+    
+    <span class="article-date">2020-09-04</span>
+    
+
+    <div class="article-content">
+      
+
+
+<div id="binomial-confidence-intervals-are-not-simple" class="section level1">
+<h1>Binomial Confidence Intervals Are Not Simple</h1>
+<p>Sometimes it can be easy to take confidence intervals for granted. They’re one of the first things you learn in statistics, and you see them everywhere. We’re so used to $ {x} 1.96  s_{{x}}$ that it can be surprising that something as fundamental as binomial confidence intervals is still a subject of</p>
+<pre class="r"><code>library(tidyverse)
+library(binom)
+p = seq(0,0.5,0.005)
+n = c(8, 20, 50)
+
+shape1 = 1
+shape2 = 1
+coverage = binom.coverage(p, n, prior.shape1=shape1, prior.shape2=shape2)
+len = binom.length(p, n, prior.shape1=shape1, prior.shape2=shape2)
+
+coverage = coverage %&gt;%
+  left_join(len, by=c(&#39;method&#39;, &#39;n&#39;, &#39;p&#39;))
+
+
+p1 = coverage %&gt;%
+  #filter(!(method %in% c(&#39;asymptotic&#39;, &#39;lrt&#39;))) %&gt;%
+  filter(method %in% c(&#39;agresti-coull&#39;, &#39;bayes&#39;, &#39;wilson&#39;, &#39;exact&#39;)) %&gt;%
+  ggplot(aes(x=p, y=length, color=method)) + 
+  geom_line() + 
+  facet_wrap(vars(n), scales=&quot;free_y&quot;)
+
+p2 = coverage %&gt;%
+  #filter(!(method %in% c(&#39;asymptotic&#39;, &#39;lrt&#39;))) %&gt;%
+  filter(method %in% c(&#39;agresti-coull&#39;, &#39;bayes&#39;, &#39;wilson&#39;, &#39;exact&#39;)) %&gt;%
+  ggplot(aes(x=p, y=coverage, color=method)) + 
+  geom_line(size=1., alpha=0.8) + 
+  geom_hline(yintercept=0.95, lty=2, alpha=0.5) + 
+  facet_wrap(vars(n)) + ylim(0.9, 1.0)
+
+gridExtra::grid.arrange(p1, p2, ncol=1)</code></pre>
+<p><img src="/post/Binom_Post_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>binom.bayes.densityplot(binom.bayes(0, 30, prior.shape1=1.5, prior.shape2=5))</code></pre>
+<p><img src="/post/Binom_Post_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>binom.length(0.2, 30, method=&#39;bayes&#39;, prior.shape1=1.5, prior.shape2=5)</code></pre>
+<pre><code>##   method  n   p    length
+## 1  bayes 30 0.2 0.2471349</code></pre>
+<pre class="r"><code>binom.length(0.2, 30, method=&#39;bayes&#39;)</code></pre>
+<pre><code>##   method  n   p    length
+## 1  bayes 30 0.2 0.2662967</code></pre>
+<pre class="r"><code>hist(rbeta(10000, shape1=0.5, shape2=0.5), xlim=c(0,1))</code></pre>
+<p><img src="/post/Binom_Post_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

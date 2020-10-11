@@ -1,0 +1,30 @@
+---
+title: "Bootstrapping"
+author: "Carter Portwood"
+date: "10/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+
+hole.dist = 400*12*3
+cup.half.width = 4.25/2
+x = 0.85
+position = 0
+
+for (i in 1:4) {
+  print(position)
+  position = position - x*(position - hole.dist)
+  if (abs(position - hole.dist) < cup.half.width) {
+    print('Hole!')
+    break
+  }
+}
+hole.dist
+```
+

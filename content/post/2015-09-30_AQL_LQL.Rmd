@@ -1,0 +1,264 @@
+---
+title: "Visualizing Inspection Sampling Scheme Selection with gganimate"
+author: "Carter Portwood"
+date: 2020-09-06
+categories: ["R"]
+tags: ["R"]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, echo=TRUE, message=FALSE, warning=FALSE)
+```
+
+It's common in the world of quality inspection to assess the proportion of defects produced by a process. To accept or reject a lot, acceptance sampling is often used. For a binary outcome like 'defect'/'not defect', this takes the form of randomly sampling $n$ items and counting the number of defects, $x$. The lot or process passes if $x \le c$ and is rejected otherwise, where $c$ is the maximum number of allowable defects. 
+
+This can all be re-framed as hypothesis testing. Let 
+$$H_0: p \le AQL$$ 
+$$H_A: p \gt AQL$$
+such that passing $AQL$ is an acceptable defect rate, so we want to pass if $p=AQL$. We limit the probability of failing at $p=AQL$ to $\alpha$.
+
+Now let $LQL$ be an unacceptable defect rate, such that we want to fail at $p=LQL$. We limit this probability to $\beta$, i.e.
+$\beta = P(X \le c \ |\ p = LQL)$. In other words, our power at $p=LQL$ is $1-\beta$. Once we set $LQL$, $AQL$, $\alpha$, and $\beta$, we can determine the necessary sample size, $n$, and acceptance criterion, $c$. This can all be best visualized through what is called an Operating Characteristic (OC) curve. An OC curve plots $P(X \le c\ |\ p)$ against $p$ for a given $n$ and $c$. In hypothesis testing terms, this is $1-\beta(p)$. Here's the OC curve for a sampling plan with $n = 20$ and $c=2$.
+
+```{r}
+library(tidyverse)
+
+plan = tibble(n=20, c=2)
+
+df.plot = plan %>%
+  expand_grid(
+    p = seq(0, 1, 0.005)
+  ) %>%
+  mutate(
+    p.pass = pbinom(c, n, p)
+  )
+
+df.plot %>%
+  ggplot(aes(x=p, y=p.pass)) +  
+  geom_line() +
+  theme_minimal() +
+  labs(title = 'OC Curve', 
+       subtitle = 'c: 2, n: 20') + 
+  ylab('P(X < c | p)')
+```
+
+
+Quality inspection seems to be one of many fields that has its own statistics dialect developed in partial isolation from mainstream statistics. AQL and LQL sampling plans were popularized by the US military in the 1940s and 50s in the format of lookup tables for $n$ and $c$. They're still often presented in unnecessarily complex and confusing tables, a relic from the 1940s. Google "ANSI ASQ Z1.4" for an example of a simple concept made confusing.
+
+The `SSPDesignBinomial` function in the `Dodge` package in R computes $n$ and $c$ for any combination of $LQL$, $AQL$, $\alpha$, and $\beta$. For instance, inputting $AQL=2.5\%, LQL=10\%, \alpha=\beta=5\%$ gives the following output: 
+
+```{r}
+library(Dodge)
+AQL = 0.025
+alpha = 0.05
+LQL = 0.1
+beta = 0.05
+SSPDesignBinomial(AQL, alpha, LQL, beta)
+```
+
+
+
+What is SSPDesignBinomial doing under the hood? I unpacked the SSPDesignBinomial code to pull out record each iteration and plot it. Below I show the OC curve as the algorithm iterates. 
+
+
+```{r fig.dim=c(5,3), echo=FALSE, message=FALSE, warning=FALSE}
+library(gganimate)
+
+nl = function(Ac, LQL, beta) {
+    n = 1
+    while (pbinom(Ac, n, LQL) >= beta) {
+        n = n + 1
+    }
+    n
+}
+nu = function(Ac, AQL, alpha) {
+    n = 1
+    while (pbinom(Ac, n, AQL) >= 1 - alpha) {
+        n = n + 1
+    }
+    n
+}
+
+
+aql_lql = function (AQL, alpha, LQL, beta) {
+  m = 40
+  # Pre-allocate
+  results = data.frame(nlql = rep(NA, m), naql = rep(NA, m), c = rep(NA, m))
+  # Initialize
+  Ac = 0
+  i = 1
+  nlql = nl(Ac, LQL, beta)
+  naql = nu(Ac, AQL, alpha)
+  results[i, 'nlql'] = nlql
+  results[i, 'naql'] = naql
+  results[i, 'c'] = Ac
+  more_c = nlql > naql
+  while (more_c) {
+    i = i + 1
+    Ac = Ac + 1
+    nlql = nl(Ac, LQL, beta)
+    naql = nu(Ac, AQL, alpha)
+    # Record iteration
+    results[i, 'nlql'] = nlql
+    results[i, 'naql'] = naql
+    results[i, 'c'] = Ac
+    more_c = nlql > naql
+  }
+  n = nl(Ac, LQL, beta)
+  results[i, 'nlql'] = n
+  results[i, 'naql'] = naql
+  results[i, 'c'] = Ac
+  return(results)
+}
+
+
+res = aql_lql(AQL, alpha, LQL, beta)
+
+res = drop_na(res)
+
+df.anim = tibble(
+  n = seq(1, max(res$nlql))
+) %>%
+  rowwise() %>%
+  mutate(
+    c = min(filter(res, n <= res$nlql)$c),
+  ) %>% 
+  expand_grid(
+    p = seq(0, 1, 0.005)
+  ) %>%
+  mutate(
+    p.pass = pbinom(c, n, p)
+  )
+
+xlim = 0.175
+df.anim %>%
+  filter(p <= xlim) %>%
+  mutate(state = paste(paste('n=', n), paste('c=', c), sep=', ')) %>%
+  ggplot(aes(x=p, y=p.pass)) +  
+  geom_line() +
+  theme_minimal() +
+  xlim(0, xlim) +
+  geom_segment(aes(x=LQL, y=0, yend=beta, xend=LQL), 
+               lty=2, alpha = 0.5, color='red') +
+  geom_segment(aes(x=0, y=beta, yend=beta, xend=LQL), 
+               lty=2, alpha = 0.5, color='red') +
+  geom_segment(aes(x=AQL, y=0, yend=1-alpha, xend=AQL), 
+               lty=2, alpha = 0.5, color='skyblue') +
+  geom_segment(aes(x=0, y=1-alpha, yend=1-alpha, xend=AQL), 
+               lty=2, alpha = 0.5, color='skyblue')+
+  labs(title = 'OC Curve', 
+       subtitle = 'c: {df.anim$c[df.anim$n == frame][1]}, n: {frame}') + 
+  ylab('P(X < c | p)') + 
+  transition_manual(n)
+```
+
+If you watch closely, you can see what's going on. $n$ increases until the OC curve drops below $\beta$ at the LQL. Then, if the OC curve has dropped below $1-\alpha$ at the AQL, the acceptance criteria is increased. Below is the code used to generate the animated plot.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+library(gganimate)
+library(gapminder)
+
+nl = function(Ac, LQL, beta) {
+    n = 1
+    while (pbinom(Ac, n, LQL) >= beta) {
+        n = n + 1
+    }
+    n
+}
+nu = function(Ac, AQL, alpha) {
+    n = 1
+    while (pbinom(Ac, n, AQL) >= 1 - alpha) {
+        n = n + 1
+    }
+    n
+}
+
+
+aql_lql = function (AQL, alpha, LQL, beta) {
+  m = 40
+  # Pre-allocate
+  results = data.frame(nlql = rep(NA, m), naql = rep(NA, m), c = rep(NA, m))
+  # Initialize
+  Ac = 0
+  i = 1
+  nlql = nl(Ac, LQL, beta)
+  naql = nu(Ac, AQL, alpha)
+  results[i, 'nlql'] = nlql
+  results[i, 'naql'] = naql
+  results[i, 'c'] = Ac
+  more_c = nlql > naql
+  while (more_c) {
+    i = i + 1
+    Ac = Ac + 1
+    nlql = nl(Ac, LQL, beta)
+    naql = nu(Ac, AQL, alpha)
+    # Record iteration
+    results[i, 'nlql'] = nlql
+    results[i, 'naql'] = naql
+    results[i, 'c'] = Ac
+    more_c = nlql > naql
+  }
+  n = nl(Ac, LQL, beta)
+  results[i, 'nlql'] = n
+  results[i, 'naql'] = naql
+  results[i, 'c'] = Ac
+  return(results)
+}
+
+
+res = aql_lql(AQL, alpha, LQL, beta)
+
+res = drop_na(res)
+
+df.anim = tibble(
+  n = seq(1, max(res$nlql))
+) %>%
+  rowwise() %>%
+  mutate(
+    c = min(filter(res, n <= res$nlql)$c),
+  ) %>% 
+  expand_grid(
+    p = seq(0, 1, 0.005)
+  ) %>%
+  mutate(
+    p.pass = pbinom(c, n, p)
+  )
+
+xlim = 0.175
+df.anim %>%
+  filter(p <= xlim) %>%
+  mutate(state = paste(paste('n=', n), paste('c=', c), sep=', ')) %>%
+  ggplot(aes(x=p, y=p.pass)) +  
+  geom_line() +
+  theme_minimal() +
+  xlim(0, xlim) +
+  geom_segment(aes(x=LQL, y=0, yend=beta, xend=LQL), 
+               lty=2, alpha = 0.5, color='red') +
+  geom_segment(aes(x=0, y=beta, yend=beta, xend=LQL), 
+               lty=2, alpha = 0.5, color='red') +
+  geom_segment(aes(x=AQL, y=0, yend=1-alpha, xend=AQL), 
+               lty=2, alpha = 0.5, color='skyblue') +
+  geom_segment(aes(x=0, y=1-alpha, yend=1-alpha, xend=AQL), 
+               lty=2, alpha = 0.5, color='skyblue')+
+  labs(title = 'OC Curve', 
+       subtitle = 'c: {df.anim$c[df.anim$n == frame][1]}, n: {frame}') + 
+  ylab('P(X < c | p)') + 
+  transition_manual(n)
+```
+
+
+# References
+
+1. A. Jonathan R. Godfrey and K. Govindaraju (2018). Dodge: Functions for acceptance sampling
+  ideas originated by H.F. Dodge. R package version 0.9-2.
+
+
+
+
+
+
+
+
+
+
+

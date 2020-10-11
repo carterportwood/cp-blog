@@ -1,0 +1,71 @@
+---
+title: Comparing Binomial Confidence Interval Methods with the 'binom' package
+author: Carter Portwood
+date: '2020-09-04'
+categories:
+  - R
+  - confidence intervals
+  - binomial
+tags:
+  - R
+  - confidence intervals
+  - binomial
+output: html_document
+---
+
+
+
+<div id="binomial-confidence-intervals-are-not-simple" class="section level1">
+<h1>Binomial Confidence Intervals Are Not Simple</h1>
+<p>Sometimes it can be easy to take confidence intervals for granted. They’re one of the first things you learn in statistics, and you see them everywhere. We’re so used to <span class="math inline">\(\hat{\theta} \pm 1.96 \ \hat{se}(\hat{\theta})\)</span> that it can be surprising that something as fundamental as binomial confidence intervals is still a subject of debate and confusion. In this post, I’ll discuss some ways you can compare confidence interval methods for binomial proportions using the wonderful <code>binom</code> package in R.</p>
+</div>
+<div id="say-no-to-wald" class="section level1">
+<h1>Say ‘no’ to Wald</h1>
+<p>So first things first: the binomial confidence interval method you probably learned in high school, the Wald interval, <span class="math inline">\(\hat{p} \pm 1.96 \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}\)</span> (a.k.a. the normal approximation), should never be your method of choice. It’s terrible. There’s basically always a better method to choose. And with the ready availability of other methods already implemented (<code>binom</code> package in R, <code>scipy.statsmodels.proportion</code> module in Python), you have no excuse. That is, unless you’re doing stats on a desert island. But even then, tedious calculations could help pass the time.</p>
+</div>
+<div id="how-to-choose-a-method" class="section level1">
+<h1>How to choose a method?</h1>
+<p>Okay, so the Wald interval is out. But now what? In this post, I’ll consider the Wilson, Agresti-Coull, Jeffreys’, and Clopper-Pearson methods. In their seminal paper on this topic, Brown, Cai, and DasGupta recommend Wilson, Agresti-Coull, and Jeffreys’. And I include Clopper-Pearson because it is widely used. As a note, Jeffreys’ is Bayesian with an uninformative prior, and Clopper-Pearson is often referred to as the ‘exact’ method.</p>
+<p>There are two factors to evaluate for confidence intervals: coverage and length. Ideally, coverage is exactly <span class="math inline">\(1-\alpha\)</span>, but because of the discrete nature of the binomial distribution, this isn’t the case. Length is the expected length of the interval, the smaller the better. Both are functions of <span class="math inline">\(n\)</span> and <span class="math inline">\(p\)</span>.</p>
+<p>Let’s plot the coverage and length for the four methods.</p>
+<pre class="r"><code>library(tidyverse)
+library(binom)
+
+p = seq(0,0.5,0.005)
+n = c(8, 15, 50)
+methods = c(&#39;agresti-coull&#39;, &#39;bayes&#39;, &#39;wilson&#39;, &#39;exact&#39;)
+
+coverage = binom.coverage(p, n, method = methods, type=&#39;central&#39;)
+len = binom.length(p, n, method = methods, type=&#39;central&#39;)
+
+coverage = coverage %&gt;%
+  left_join(len, by=c(&#39;method&#39;, &#39;n&#39;, &#39;p&#39;))
+
+p1 = coverage %&gt;%
+  ggplot(aes(x=p, y=length, color=method)) + 
+  geom_line() + 
+  facet_wrap(vars(n), scales=&quot;free_y&quot;, labeller = label_both) +
+  theme_minimal()
+
+p2 = coverage %&gt;%
+  ggplot(aes(x=p, y=coverage, color=method)) + 
+  geom_line(alpha=0.5, lwd=1) + 
+  geom_hline(yintercept=0.95, lty=2, alpha=0.5) + 
+  facet_wrap(vars(n), labeller = label_both) + ylim(0.825, 1.0) +
+  theme_minimal()
+
+gridExtra::grid.arrange(p1, p2, ncol=1)</code></pre>
+<p><img src="/post/2020-09-01_Binomial_CIs_files/figure-html/unnamed-chunk-2-1.png" width="816" /></p>
+<p>We can see that the exact interval is the only that has coverage greater than 95% for all <span class="math inline">\(p\)</span>. But it’s also tends to be wider than the other methods. The Jeffreys’ interval (shown as Bayes above) has inadequate coverage for some <span class="math inline">\(p\)</span> and <span class="math inline">\(n\)</span>, but is quite narrow and has decent coverage for most <span class="math inline">\(p\)</span>.</p>
+<p>As noted by Brown <em>et al.</em>, the Agresti-Coull interval will always contain the Wilson interval, so it has both greater coverage and length for all <span class="math inline">\(n\)</span>, <span class="math inline">\(p\)</span>. For small <span class="math inline">\(n\)</span> in particular, Agresti-Coull is overly-conservative.</p>
+<p>So we see the origin of Brown <em>et al.</em>’s guidance: Wilson or Jeffreys’ for <span class="math inline">\(n \le 40\)</span> and Agresti-Coull for <span class="math inline">\(n \gt 40\)</span>.</p>
+<p>Hopefully you can use this code to evaluate interval methods for your particular situation. This code can also be found on my <a href="">GitHub</a></p>
+</div>
+<div id="references" class="section level1">
+<h1>References</h1>
+<ol style="list-style-type: decimal">
+<li><p>Interval Estimation fora Binomial Proportion. Lawrence D. Brown, T. Tony Cai and Anirban DasGupta</p></li>
+<li><p>Sundar Dorai-Raj (2014). binom: Binomial Confidence Intervals For Several
+Parameterizations. R package version 1.1-1. <a href="https://CRAN.R-project.org/package=binom" class="uri">https://CRAN.R-project.org/package=binom</a></p></li>
+</ol>
+</div>

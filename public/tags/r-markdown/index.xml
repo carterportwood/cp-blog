@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>R Markdown on Carter&#39;s Website</title>
+    <link>/tags/r-markdown/</link>
+    <description>Recent content in R Markdown on Carter&#39;s Website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 06 Sep 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/r-markdown/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Animating AQL/LQL Sampling Scheme Selection</title>
+      <link>/2020/09/06/animating-aql/lql-sampling-scheme-selection/</link>
+      <pubDate>Sun, 06 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/09/06/animating-aql/lql-sampling-scheme-selection/</guid>
+      <description>It’s common in the world of quality inspection to assess the proportion of defects produced by a process. To accept or reject a lot or process, acceptance sampling is often used. For a binary outcome like ‘defect’/‘not defect’, this takes the form of randomly sampling \(n\) items and counting the number of defects, \(x\). The lot or process passes if \(x \le c\) and is rejected otherwise, where \(c\) is the maximum number of allowable defects.</description>
+    </item>
+    
+  </channel>
+</rss>
