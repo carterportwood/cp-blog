@@ -1,5 +1,5 @@
 ---
-title: Comparing Binomial Confidence Interval Methods with the 'binom' package
+title: "Comparing Binomial Confidence Interval Methods"
 author: Carter Portwood
 date: '2020-09-04'
 categories:

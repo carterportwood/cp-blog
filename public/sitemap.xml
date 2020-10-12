@@ -3,11 +3,6 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/about/</loc>
-    <lastmod>2020-10-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/tags/bayes/</loc>
     <lastmod>2020-10-01T00:00:00+00:00</lastmod>
   </url>
@@ -43,6 +38,11 @@
   </url>
   
   <url>
+    <loc>/2020/10/01/get-better-binomial-confidence-intervals/</loc>
+    <lastmod>2020-10-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/</loc>
     <lastmod>2020-10-01T00:00:00+00:00</lastmod>
   </url>
@@ -63,17 +63,12 @@
   </url>
   
   <url>
-    <loc>/2020/10/01/use-what-you-already-know-to-get-better-binomial-confidence-intervals/</loc>
-    <lastmod>2020-10-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/2020/09/06/visualizing-inspection-sampling-scheme-selection-with-gganimate/</loc>
     <lastmod>2020-09-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2020/09/04/comparing-binomial-confidence-interval-methods-with-the-binom-package/</loc>
+    <loc>/2020/09/04/comparing-binomial-confidence-interval-methods/</loc>
     <lastmod>2020-09-04T00:00:00+00:00</lastmod>
   </url>
   

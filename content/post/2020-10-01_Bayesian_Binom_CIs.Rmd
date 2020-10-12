@@ -1,5 +1,5 @@
 ---
-title: Use What You Already Know to Get Better Binomial Confidence Intervals
+title: Get Better Binomial Confidence Intervals
 author: "Carter Portwood"
 date: '2020-10-01'
 categories:

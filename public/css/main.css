@@ -164,13 +164,13 @@ code {
   padding: 0;
   list-style: none;
   line-height: 1.3em;
-  text-align: center;
+  text-align: right;
   color: #111;
 }
 
 .archive-title {
-  font-size: 32px;
-  margin-top: 60px;
+  font-size: 100px;
+  margin-top: 10px;
 }
 
 .archive-item {
@@ -282,7 +282,8 @@ code {
   }
 
   .archive-title {
-    font-size: 38px;
+    font-size: 20px;
+    text-align: right;
   }
 
   .archive-item-date {

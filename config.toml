@@ -1,6 +1,6 @@
 baseurl = "/"
 languageCode = "en-us"
-title = "Carter's Website"
+title = "Carter Portwood"
 theme = "hugo-lithium"
 googleAnalytics = ""
 disqusShortname = ""
@@ -10,8 +10,8 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     post = "/:year/:month/:day/:slug/"
 
 [[menu.main]]
-    name = "About"
-    url = "/about/"
+    name = "Blog"
+    url = "/post/"
 [[menu.main]]
     name = "LinkedIn"
     url = "https://www.linkedin.com/in/carter-portwood/"
@@ -32,7 +32,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     MathJaxVersion = "2.7.5"
 
     # path to the favicon, under "static"
-    favicon = "favicon.ico"
+    favicon = "images/avocado.jpg"
 
     [params.logo]
     url = "avocado.jpg"
