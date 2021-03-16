@@ -75,24 +75,20 @@
       
 
 
-<p>It’s common in the world of quality inspection to assess the proportion of defects produced by a process. To accept or reject a lot, acceptance sampling is often used. For a binary outcome like ‘defect’/‘not defect’, this takes the form of randomly sampling <span class="math inline">\(n\)</span> items and counting the number of defects, <span class="math inline">\(x\)</span>. The lot or process passes if <span class="math inline">\(x \le c\)</span> and is rejected otherwise, where <span class="math inline">\(c\)</span> is the maximum number of allowable defects.</p>
+<p>It’s common in the world of quality inspection to assess the proportion of defects produced by a process. To accept or reject a lot, acceptance sampling is often used. For a binary outcome like defect/not defect, this can take the form of randomly sampling <span class="math inline">\(n\)</span> items and counting the number of defects, <span class="math inline">\(x\)</span>. The lot or process passes if <span class="math inline">\(x \le c\)</span> and is rejected otherwise, where <span class="math inline">\(c\)</span> is the maximum number of allowable defects.</p>
 <p>This can all be re-framed as hypothesis testing. Let
 <span class="math display">\[H_0: p \le AQL\]</span>
 <span class="math display">\[H_A: p \gt AQL\]</span>
 such that passing <span class="math inline">\(AQL\)</span> is an acceptable defect rate, so we want to pass if <span class="math inline">\(p=AQL\)</span>. We limit the probability of failing at <span class="math inline">\(p=AQL\)</span> to <span class="math inline">\(\alpha\)</span>.</p>
 <p>Now let <span class="math inline">\(LQL\)</span> be an unacceptable defect rate, such that we want to fail at <span class="math inline">\(p=LQL\)</span>. We limit this probability to <span class="math inline">\(\beta\)</span>, i.e.
-<span class="math inline">\(\beta = P(X \le c \ |\ p = LQL)\)</span>. In other words, our power at <span class="math inline">\(p=LQL\)</span> is <span class="math inline">\(1-\beta\)</span>. Once we set <span class="math inline">\(LQL\)</span>, <span class="math inline">\(AQL\)</span>, <span class="math inline">\(\alpha\)</span>, and <span class="math inline">\(\beta\)</span>, we can determine the necessary sample size, <span class="math inline">\(n\)</span>, and acceptance criterion, <span class="math inline">\(c\)</span>. This can all be best visualized through what is called an Operating Characteristic (OC) curve. An OC curve plots <span class="math inline">\(P(X \le c\ |\ p)\)</span> against <span class="math inline">\(p\)</span> for a given <span class="math inline">\(n\)</span> and <span class="math inline">\(c\)</span>. In hypothesis testing terms, this is <span class="math inline">\(1-\beta(p)\)</span>. Here’s the OC curve for a sampling plan with <span class="math inline">\(n = 20\)</span> and <span class="math inline">\(c=2\)</span>.</p>
+<span class="math inline">\(\beta = P(X \le c \ |\ p = LQL)\)</span>. In other words, our power at <span class="math inline">\(p=LQL\)</span> is <span class="math inline">\(1-\beta\)</span>. Once we set <span class="math inline">\(LQL\)</span>, <span class="math inline">\(AQL\)</span>, <span class="math inline">\(\alpha\)</span>, and <span class="math inline">\(\beta\)</span>, we can determine the necessary sample size, <span class="math inline">\(n\)</span>, and acceptance criterion, <span class="math inline">\(c\)</span>. This can all be best visualized through what is called an Operating Characteristic (OC) curve. An OC curve plots the probability of accepting the lot, <span class="math inline">\(P(X \le c\ |\ p)\)</span>, against <span class="math inline">\(p\)</span>. Here’s the OC curve for a sampling plan with <span class="math inline">\(n = 20\)</span> and <span class="math inline">\(c=2\)</span>.</p>
 <pre class="r"><code>library(tidyverse)
 
 plan = tibble(n=20, c=2)
 
 df.plot = plan %&gt;%
-  expand_grid(
-    p = seq(0, 1, 0.005)
-  ) %&gt;%
-  mutate(
-    p.pass = pbinom(c, n, p)
-  )
+  expand_grid(p = seq(0, 1, 0.005)) %&gt;%
+  mutate(p.pass = pbinom(c, n, p))
 
 df.plot %&gt;%
   ggplot(aes(x=p, y=p.pass)) +  
@@ -102,7 +98,6 @@ df.plot %&gt;%
        subtitle = &#39;c: 2, n: 20&#39;) + 
   ylab(&#39;P(X &lt; c | p)&#39;)</code></pre>
 <p><img src="/post/2015-09-30_AQL_LQL_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
-<p>Quality inspection seems to be one of many fields that has its own statistics dialect developed in partial isolation from mainstream statistics. AQL and LQL sampling plans were popularized by the US military in the 1940s and 50s in the format of lookup tables for <span class="math inline">\(n\)</span> and <span class="math inline">\(c\)</span>. They’re still often presented in unnecessarily complex and confusing tables, a relic from the 1940s. Google “ANSI ASQ Z1.4” for an example of a simple concept made confusing.</p>
 <p>The <code>SSPDesignBinomial</code> function in the <code>Dodge</code> package in R computes <span class="math inline">\(n\)</span> and <span class="math inline">\(c\)</span> for any combination of <span class="math inline">\(LQL\)</span>, <span class="math inline">\(AQL\)</span>, <span class="math inline">\(\alpha\)</span>, and <span class="math inline">\(\beta\)</span>. For instance, inputting <span class="math inline">\(AQL=2.5\%, LQL=10\%, \alpha=\beta=5\%\)</span> gives the following output:</p>
 <pre class="r"><code>library(Dodge)
 AQL = 0.025
@@ -112,9 +107,10 @@ beta = 0.05
 SSPDesignBinomial(AQL, alpha, LQL, beta)
 ##     n Ac
 ## 1 103  5</code></pre>
-<p>What is SSPDesignBinomial doing under the hood? I unpacked the SSPDesignBinomial code to pull out record each iteration and plot it. Below I show the OC curve as the algorithm iterates.</p>
+<p>To visualize what SSPDesignBinomial is doing under the hood, I unpacked the code to pull out each iteration and plot it. Below I show the OC curve as the algorithm iterates.</p>
 <p><img src="/post/2015-09-30_AQL_LQL_files/figure-html/unnamed-chunk-3-1.gif" /><!-- --></p>
-<p>If you watch closely, you can see what’s going on. <span class="math inline">\(n\)</span> increases until the OC curve drops below <span class="math inline">\(\beta\)</span> at the LQL. Then, if the OC curve has dropped below <span class="math inline">\(1-\alpha\)</span> at the AQL, the acceptance criteria is increased. Below is the code used to generate the animated plot.</p>
+<p>If you watch closely, you may see what’s going on. <span class="math inline">\(n\)</span> increases until the OC curve drops below <span class="math inline">\(\beta\)</span> at the LQL. In words, it increases the sample size until the risk of passing at a <em>bad</em> defect rate is sufficiently small. Then, if the OC curve has dropped below <span class="math inline">\(1-\alpha\)</span> at the AQL, the acceptance criteria is increased. Below is the code used to generate the animated plot.</p>
+<p>**Quality inspection seems to be one of many fields that has its own statistics dialect developed in partial isolation from mainstream statistics. AQL and LQL sampling plans were popularized by the US military in the 1940s and 50s in the format of lookup tables for <span class="math inline">\(n\)</span> and <span class="math inline">\(c\)</span>. They’re still often presented in unnecessarily complex and confusing tables, a relic from the 1940s. Google “ANSI ASQ Z1.4” for an example of a simple concept made confusing.</p>
 <pre class="r"><code>library(gganimate)
 library(gapminder)
 

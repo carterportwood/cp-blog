@@ -12,11 +12,11 @@
     
     
     <item>
-      <title>Get Better Binomial Confidence Intervals</title>
-      <link>/2020/10/01/get-better-binomial-confidence-intervals/</link>
+      <title>Getting Better Binomial Confidence Intervals</title>
+      <link>/2020/10/01/getting-better-binomial-confidence-intervals/</link>
       <pubDate>Thu, 01 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/10/01/get-better-binomial-confidence-intervals/</guid>
+      <guid>/2020/10/01/getting-better-binomial-confidence-intervals/</guid>
       <description>In a prior post, I showed how to compare expected interval lengths and coverages. In this post, I’ll show how you can leverage your prior knowledge to get better binomial confidence intervals.
 When constructing a binomial confidence interval, it’s rare that one has no prior information about what the proportion of interest is. For instance, even if I know nothing about the proportion of defects at a factory, for most factories, I can safely assume that it’s more likely to be 10% than it is to be 90%.</description>
     </item>
@@ -27,7 +27,7 @@ When constructing a binomial confidence interval, it’s rare that one has no pr
       <pubDate>Fri, 04 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/09/04/comparing-binomial-confidence-interval-methods/</guid>
-      <description>Binomial Confidence Intervals Are Not Simple Sometimes it can be easy to take confidence intervals for granted. They’re one of the first things you learn in statistics, and you see them everywhere. We’re so used to \(\hat{\theta} \pm 1.96 \ \hat{se}(\hat{\theta})\) that it can be surprising that something as fundamental as binomial confidence intervals is still a subject of debate and confusion. In this post, I’ll discuss some ways you can compare confidence interval methods for binomial proportions using the wonderful binom package in R.</description>
+      <description>Binomial Confidence Intervals Are Not Simple Sometimes it can be easy to take confidence intervals for granted. They’re one of the first things you learn in statistics, and you see them everywhere. We’re so used to \(\hat{\theta} \pm 1.96 \ \hat{se}(\hat{\theta})\) that it can be surprising that something as fundamental as binomial confidence intervals is still a subject of debate and confusion. In this post, I’ll discuss some ways you can compare confidence interval methods for binomial proportions with the easy-to-use binom package in R.</description>
     </item>
     
   </channel>

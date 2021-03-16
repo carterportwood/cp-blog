@@ -3,7 +3,12 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/tags/bayes/</loc>
+    <loc>/tags/bayesian/</loc>
+    <lastmod>2020-10-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/binom/</loc>
     <lastmod>2020-10-01T00:00:00+00:00</lastmod>
   </url>
   
@@ -13,17 +18,7 @@
   </url>
   
   <url>
-    <loc>/categories/binomial/</loc>
-    <lastmod>2020-10-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/</loc>
-    <lastmod>2020-10-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/</loc>
     <lastmod>2020-10-01T00:00:00+00:00</lastmod>
   </url>
   
@@ -33,12 +28,7 @@
   </url>
   
   <url>
-    <loc>/categories/confidence-intervals/</loc>
-    <lastmod>2020-10-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/2020/10/01/get-better-binomial-confidence-intervals/</loc>
+    <loc>/2020/10/01/getting-better-binomial-confidence-intervals/</loc>
     <lastmod>2020-10-01T00:00:00+00:00</lastmod>
   </url>
   
@@ -53,13 +43,18 @@
   </url>
   
   <url>
-    <loc>/categories/r/</loc>
+    <loc>/tags/</loc>
     <lastmod>2020-10-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/</loc>
-    <lastmod>2020-10-01T00:00:00+00:00</lastmod>
+    <loc>/categories/</loc>
+    <lastmod>2020-09-06T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/r/</loc>
+    <lastmod>2020-09-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -68,8 +63,22 @@
   </url>
   
   <url>
+    <loc>/tags/binomial-distribution/</loc>
+    <lastmod>2020-09-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/2020/09/04/comparing-binomial-confidence-interval-methods/</loc>
     <lastmod>2020-09-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/statistics/</loc>
+    <lastmod>2020-09-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/1/01/01/mad-outlier-detection/</loc>
   </url>
   
 </urlset>

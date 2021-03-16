@@ -1,15 +1,13 @@
 ---
-title: "Comparing Binomial Confidence Interval Methods"
+title: Comparing Binomial Confidence Interval Methods
 author: Carter Portwood
 date: '2020-09-04'
-categories:
-  - R
-  - confidence intervals
-  - binomial
 tags:
   - R
+  - statistics
   - confidence intervals
-  - binomial
+  - binomial distribution
+  - binom
 output: html_document
 ---
 
@@ -20,9 +18,9 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 
 # Binomial Confidence Intervals Are Not Simple
 
-Sometimes it can be easy to take confidence intervals for granted. They're one of the first things you learn in statistics, and you see them everywhere. We're so used to $\hat{\theta} \pm 1.96 \ \hat{se}(\hat{\theta})$ that it can be surprising that something as fundamental as binomial confidence intervals is still a subject of debate and confusion. In this post, I'll discuss some ways you can compare confidence interval methods for binomial proportions using the wonderful `binom` package in R.
+Sometimes it can be easy to take confidence intervals for granted. They're one of the first things you learn in statistics, and you see them everywhere. We're so used to $\hat{\theta} \pm 1.96 \ \hat{se}(\hat{\theta})$ that it can be surprising that something as fundamental as binomial confidence intervals is still a subject of debate and confusion. In this post, I'll discuss some ways you can compare confidence interval methods for binomial proportions with the easy-to-use `binom` package in R.
 
-# Say 'no' to Wald
+# Say "no" to Wald
 
 So first things first: the binomial confidence interval method you probably learned in high school, the Wald interval, $\hat{p} \pm 1.96 \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}$ (a.k.a. the normal approximation), should never be your method of choice. It's terrible. There's basically always a better method to choose. And with the ready availability of other methods already implemented (`binom` package in R, `scipy.statsmodels.proportion` module in Python), you have no excuse. That is, unless you're doing stats on a desert island. But even then, tedious calculations could help pass the time.
 
@@ -96,7 +94,7 @@ Hopefully you can use this code to evaluate interval methods for your particular
 
 # References
 
-1. Interval Estimation fora Binomial Proportion. Lawrence D. Brown, T. Tony Cai and Anirban DasGupta
+1. Interval Estimation for a Binomial Proportion. Lawrence D. Brown, T. Tony Cai and Anirban DasGupta
 
 1. Sundar Dorai-Raj (2014). binom: Binomial Confidence Intervals For Several
   Parameterizations. R package version 1.1-1. https://CRAN.R-project.org/package=binom

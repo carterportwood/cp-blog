@@ -1,16 +1,13 @@
 ---
-title: Get Better Binomial Confidence Intervals
+title: Getting Better Binomial Confidence Intervals
 author: "Carter Portwood"
 date: '2020-10-01'
-categories:
-  - R
-  - confidence intervals
-  - binomial
 tags:
   - R
   - confidence intervals
   - binomial
-  - Bayes
+  - Bayesian
+  - binom
 output: html_document
 ---
 
@@ -77,7 +74,7 @@ coverage %>%
   kable(digits=2)
 ```
 
-Of course, this is lucky case that your prior and the true distribution are the exact same. If you were always that good, you wouldn't need to collect any data! It's not a fair comparison to frequentist methods to assume that $f_p = \pi$. So let's make our prior a little less confident, $Beta(1, 3)$, shown below, and still have $p \sim Beta(1, 10)$. 
+Of course, this is lucky case that your prior and the true distribution are the exact same. If you were always that good, you wouldn't need to collect any data! It's not a fair comparison to assume that $f_p = \pi$. So let's make our prior a little less confident, $Beta(1, 3)$, shown below, and still have $p \sim Beta(1, 10)$. 
 
 ```{r}
 prior.shape1 = 1 # this is your prior belief
@@ -161,4 +158,8 @@ coverage %>%
 ```
 
 
-So, we've seen how using an informed prior for a Bayesian interval can improve interval efficiency, especially with limited sample size. But a mis-specified prior will lead to bigger intervals, poor coverage, and incorrect inference. If you have an idea for what the 'distribution' of $p$, then you can use the above code to calculate the expected coverage and length for various interval methods. When in doubt, the `binom` package makes exploring different methods very easy.
+So, we've seen how using an informed prior for a Bayesian interval can improve interval efficiency, especially with limited sample size. But a mis-specified prior will lead to bigger intervals, poor coverage, and incorrect inference. 
+
+Of course, this is all based on the idea that it's appropriate to treat $p$ as from some distribution. But you can still utilize this to pick whether its worth using a Bayesian CI, even if you philosophically believe $p$ is fixed. Without knowing $p$, it makes sense to try to choose the best method for the "region" in which you believe $p$ may reside. In addition, I've seen comparisons of the "average coverage" and "average width" of confidence interval methods. It's worth noting that this is equivalent to assuming $p \sim Unif(0, 1)$. Oftentimes, that's even more nonsensical than assuming $p$ is from some other distribution.
+
+If you have an idea for what the 'distribution' of $p$, then you can use the above code to calculate the expected coverage and length for various interval methods. When in doubt, the `binom` package makes exploring different methods very easy.

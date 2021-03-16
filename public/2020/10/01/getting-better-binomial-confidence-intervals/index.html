@@ -1,16 +1,78 @@
----
-title: Getting Better Binomial Confidence Intervals
-author: "Carter Portwood"
-date: '2020-10-01'
-tags:
-  - R
-  - confidence intervals
-  - binomial
-  - Bayesian
-  - binom
-output: html_document
----
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.74.3" />
 
+
+<title>Getting Better Binomial Confidence Intervals - Carter Portwood</title>
+<meta property="og:title" content="Getting Better Binomial Confidence Intervals - Carter Portwood">
+
+
+  <link href='/images/avocado.jpg' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/avocado.jpg"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/post/">Blog</a></li>
+    
+    <li><a href="https://github.com/carterportwood">GitHub</a></li>
+    
+    <li><a href="https://www.linkedin.com/in/carter-portwood/">LinkedIn</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">Getting Better Binomial Confidence Intervals</h1>
+
+    
+    <span class="article-date">2020-10-01</span>
+    
+
+    <div class="article-content">
+      
 
 
 <p>In a prior post, I showed how to compare expected interval lengths and coverages. In this post, I’ll show how you can leverage your prior knowledge to get better binomial confidence intervals.</p>
@@ -222,3 +284,45 @@ plot(p, dbeta(p, prior.shape1, prior.shape2), type=&#39;l&#39;,
 <p>So, we’ve seen how using an informed prior for a Bayesian interval can improve interval efficiency, especially with limited sample size. But a mis-specified prior will lead to bigger intervals, poor coverage, and incorrect inference.</p>
 <p>Of course, this is all based on the idea that it’s appropriate to treat <span class="math inline">\(p\)</span> as from some distribution. But you can still utilize this to pick whether its worth using a Bayesian CI, even if you philosophically believe <span class="math inline">\(p\)</span> is fixed. Without knowing <span class="math inline">\(p\)</span>, it makes sense to try to choose the best method for the “region” in which you believe <span class="math inline">\(p\)</span> may reside. In addition, I’ve seen comparisons of the “average coverage” and “average width” of confidence interval methods. It’s worth noting that this is equivalent to assuming <span class="math inline">\(p \sim Unif(0, 1)\)</span>. Oftentimes, that’s even more nonsensical than assuming <span class="math inline">\(p\)</span> is from some other distribution.</p>
 <p>If you have an idea for what the ‘distribution’ of <span class="math inline">\(p\)</span>, then you can use the above code to calculate the expected coverage and length for various interval methods. When in doubt, the <code>binom</code> package makes exploring different methods very easy.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

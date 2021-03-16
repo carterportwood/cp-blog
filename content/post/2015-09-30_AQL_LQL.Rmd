@@ -10,15 +10,15 @@ tags: ["R"]
 knitr::opts_chunk$set(collapse = TRUE, echo=TRUE, message=FALSE, warning=FALSE)
 ```
 
-It's common in the world of quality inspection to assess the proportion of defects produced by a process. To accept or reject a lot, acceptance sampling is often used. For a binary outcome like 'defect'/'not defect', this takes the form of randomly sampling $n$ items and counting the number of defects, $x$. The lot or process passes if $x \le c$ and is rejected otherwise, where $c$ is the maximum number of allowable defects. 
+It's common in the world of quality inspection to assess the proportion of defects produced by a process. To accept or reject a lot, acceptance sampling is often used. For a binary outcome like defect/not defect, this can take the form of randomly sampling $n$ items and counting the number of defects, $x$. The lot or process passes if $x \le c$ and is rejected otherwise, where $c$ is the maximum number of allowable defects. 
 
 This can all be re-framed as hypothesis testing. Let 
 $$H_0: p \le AQL$$ 
 $$H_A: p \gt AQL$$
-such that passing $AQL$ is an acceptable defect rate, so we want to pass if $p=AQL$. We limit the probability of failing at $p=AQL$ to $\alpha$.
+such that passing $AQL$ is an acceptable defect rate, so we want to pass if $p=AQL$. We limit the probability of failing at $p=AQL$ to $\alpha$. 
 
 Now let $LQL$ be an unacceptable defect rate, such that we want to fail at $p=LQL$. We limit this probability to $\beta$, i.e.
-$\beta = P(X \le c \ |\ p = LQL)$. In other words, our power at $p=LQL$ is $1-\beta$. Once we set $LQL$, $AQL$, $\alpha$, and $\beta$, we can determine the necessary sample size, $n$, and acceptance criterion, $c$. This can all be best visualized through what is called an Operating Characteristic (OC) curve. An OC curve plots $P(X \le c\ |\ p)$ against $p$ for a given $n$ and $c$. In hypothesis testing terms, this is $1-\beta(p)$. Here's the OC curve for a sampling plan with $n = 20$ and $c=2$.
+$\beta = P(X \le c \ |\ p = LQL)$. In other words, our power at $p=LQL$ is $1-\beta$. Once we set $LQL$, $AQL$, $\alpha$, and $\beta$, we can determine the necessary sample size, $n$, and acceptance criterion, $c$. This can all be best visualized through what is called an Operating Characteristic (OC) curve. An OC curve plots the probability of accepting the lot, $P(X \le c\ |\ p)$, against $p$. Here's the OC curve for a sampling plan with $n = 20$ and $c=2$.
 
 ```{r}
 library(tidyverse)
@@ -26,12 +26,8 @@ library(tidyverse)
 plan = tibble(n=20, c=2)
 
 df.plot = plan %>%
-  expand_grid(
-    p = seq(0, 1, 0.005)
-  ) %>%
-  mutate(
-    p.pass = pbinom(c, n, p)
-  )
+  expand_grid(p = seq(0, 1, 0.005)) %>%
+  mutate(p.pass = pbinom(c, n, p))
 
 df.plot %>%
   ggplot(aes(x=p, y=p.pass)) +  
@@ -42,8 +38,6 @@ df.plot %>%
   ylab('P(X < c | p)')
 ```
 
-
-Quality inspection seems to be one of many fields that has its own statistics dialect developed in partial isolation from mainstream statistics. AQL and LQL sampling plans were popularized by the US military in the 1940s and 50s in the format of lookup tables for $n$ and $c$. They're still often presented in unnecessarily complex and confusing tables, a relic from the 1940s. Google "ANSI ASQ Z1.4" for an example of a simple concept made confusing.
 
 The `SSPDesignBinomial` function in the `Dodge` package in R computes $n$ and $c$ for any combination of $LQL$, $AQL$, $\alpha$, and $\beta$. For instance, inputting $AQL=2.5\%, LQL=10\%, \alpha=\beta=5\%$ gives the following output: 
 
@@ -57,9 +51,7 @@ SSPDesignBinomial(AQL, alpha, LQL, beta)
 ```
 
 
-
-What is SSPDesignBinomial doing under the hood? I unpacked the SSPDesignBinomial code to pull out record each iteration and plot it. Below I show the OC curve as the algorithm iterates. 
-
+To visualize what SSPDesignBinomial is doing under the hood, I unpacked the code to pull out each iteration and plot it. Below I show the OC curve as the algorithm iterates. 
 
 ```{r fig.dim=c(5,3), echo=FALSE, message=FALSE, warning=FALSE}
 library(gganimate)
@@ -152,7 +144,10 @@ df.anim %>%
   transition_manual(n)
 ```
 
-If you watch closely, you can see what's going on. $n$ increases until the OC curve drops below $\beta$ at the LQL. Then, if the OC curve has dropped below $1-\alpha$ at the AQL, the acceptance criteria is increased. Below is the code used to generate the animated plot.
+If you watch closely, you may see what's going on. $n$ increases until the OC curve drops below $\beta$ at the LQL. In words, it increases the sample size until the risk of passing at a *bad* defect rate is sufficiently small. Then, if the OC curve has dropped below $1-\alpha$ at the AQL, the acceptance criteria is increased. Below is the code used to generate the animated plot.
+
+
+**Quality inspection seems to be one of many fields that has its own statistics dialect developed in partial isolation from mainstream statistics. AQL and LQL sampling plans were popularized by the US military in the 1940s and 50s in the format of lookup tables for $n$ and $c$. They're still often presented in unnecessarily complex and confusing tables, a relic from the 1940s. Google "ANSI ASQ Z1.4" for an example of a simple concept made confusing.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 library(gganimate)

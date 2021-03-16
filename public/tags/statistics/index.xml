@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>statistics on Carter Portwood</title>
+    <link>/tags/statistics/</link>
+    <description>Recent content in statistics on Carter Portwood</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 04 Sep 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/statistics/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Comparing Binomial Confidence Interval Methods</title>
+      <link>/2020/09/04/comparing-binomial-confidence-interval-methods/</link>
+      <pubDate>Fri, 04 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/09/04/comparing-binomial-confidence-interval-methods/</guid>
+      <description>Binomial Confidence Intervals Are Not Simple Sometimes it can be easy to take confidence intervals for granted. They’re one of the first things you learn in statistics, and you see them everywhere. We’re so used to \(\hat{\theta} \pm 1.96 \ \hat{se}(\hat{\theta})\) that it can be surprising that something as fundamental as binomial confidence intervals is still a subject of debate and confusion. In this post, I’ll discuss some ways you can compare confidence interval methods for binomial proportions with the easy-to-use binom package in R.</description>
+    </item>
+    
+  </channel>
+</rss>

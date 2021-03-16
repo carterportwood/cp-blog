@@ -1,0 +1,16 @@
+---
+title: MAD Outlier Detection
+author: "Carter Portwood"
+date: "10/11/2020"
+output: html_document
+---
+
+
+
+<p>In this post, I show how to set the cutoff for MAD-based outlier detection. This is not meant to be an explainer about MAD outlier detection since there’s already good resources (here)[] and (here)[].</p>
+<p>A colleague recent came to me asking for advice about automated univarite outlier detection. I wasn’t all that familiar with outlier detection. After doing some reading, I found a method that suited our purposes well: outlier detection using the Median Absolute Deviation (MAD).</p>
+<pre class="r"><code>sample = rnorm(20)
+sample = c(sample, 20)
+hist(sample, breaks=50)
+rug(sample)</code></pre>
+<p><img src="/post/2020-10-13_MAD_Outliers_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
