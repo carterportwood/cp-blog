@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.74.3" />
+
+
+<title>Two Types of Methodological Complexity - Carter Portwood</title>
+<meta property="og:title" content="Two Types of Methodological Complexity - Carter Portwood">
+
+
+  <link href='/images/avocado.jpg' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/avocado.jpg"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/post/">Blog</a></li>
+    
+    <li><a href="https://github.com/carterportwood">GitHub</a></li>
+    
+    <li><a href="https://www.linkedin.com/in/carter-portwood/">LinkedIn</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">2 min read</span>
+    
+
+    <h1 class="article-title">Two Types of Methodological Complexity</h1>
+
+    
+    <span class="article-date">2021-06-25</span>
+    
+
+    <div class="article-content">
+      
+
+
+<p><img src="/post/2020-06-02_Two_Complexity_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>I often see statements like, “As the complexity of the model increases, the variance will increase and bias will decrease.” This type of statement is referring to a specific type of model complexity, namely, the model’s capacity to overfit data. Below, I call this the “degrees of freedom complexity,” for lack of a better term.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>Maybe a bit pedantically, I’ll point out that there’s another important type of complexity that is distinct from the degrees of freedom complexity, what I’ll call “interpretation complexity”. Interpretation complexity is how difficult it is to explain (and sell) to your audiences.</p>
+<p>The obvious example of this is regularization. People tend to be more comfortable with OLS than they are with Bayesian regression. Suppose that both models are fit with the same set of predictors and that the Bayesian model has regularizing priors. Then, the Bayesian model is on the lower-variance (aka “simpler”) side of the bias/variance trade-off than the OLS model is. But in most situations, the Bayesian regression still has more interpretation complexity.</p>
+<p>Unlike degrees of freedom complexity, interpretation complexity is context-dependent. Oftentimes, the least “interpretionally” complex method will be the one that is standard in the context.</p>
+<div id="takeaway" class="section level1">
+<h1>Takeaway</h1>
+<p>Sometimes, reducing MSE and reducing interpretation complexity may be at odds with each other. Both of these factors need to weigh into a statistician’s/data scientist’s consideration of methods. Sometimes it may be worthwhile to keep things simple at the expense of the better-fit method.</p>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>It recently came to my attention that this is a misnomer. Apparently, degrees of freedom is not monotonic with model complexity: <a href="https://web.stanford.edu/~hastie/Papers/df_paper_LJrev6.pdf" class="uri">https://web.stanford.edu/~hastie/Papers/df_paper_LJrev6.pdf</a><a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+
+    
+  </body>
+</html>
+

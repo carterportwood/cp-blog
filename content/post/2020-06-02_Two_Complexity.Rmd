@@ -1,0 +1,41 @@
+---
+title: "Two Types of Methodological Complexity"
+author: "Carter Portwood"
+date: 2021-06-25
+output: html_document
+---
+
+```{r include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.align = 'center'}
+set.seed(12)
+grid = expand_grid(
+  x = seq(-pi, pi, by=0.01),
+  y = seq(-pi, pi, by=0.01)
+) %>%
+  mutate(
+    xt = runif(1, -1, 1)*x + cos(y^2 + 0.5*x^2),
+    yt = runif(1, -1, 1)*y - sin(x^2)
+  ) 
+
+grid %>%
+  ggplot(aes(xt, yt)) +
+  geom_point(shape=20, size=0, alpha=0.1, color='#00334d') +
+  theme_void() +
+  theme(panel.background = element_rect(fill = '#ffe6cc'))
+```
+
+
+I often see statements like, "As the complexity of the model increases, the variance will increase and bias will decrease." This type of statement is referring to a specific type of model complexity, namely, the model's capacity to overfit data. Below, I call this the "degrees of freedom complexity," for lack of a better term.^[It recently came to my attention that this is a misnomer. Apparently, degrees of freedom is not monotonic with model complexity: https://web.stanford.edu/~hastie/Papers/df_paper_LJrev6.pdf]
+
+Maybe a bit pedantically, I'll point out that there's another important type of complexity that is distinct from the degrees of freedom complexity, what I'll call "interpretation complexity". Interpretation complexity is how difficult it is to explain (and sell) to your audiences. 
+
+The obvious example of this is regularization. People tend to be more comfortable with OLS than they are with Bayesian regression. Suppose that both models are fit with the same set of predictors and that the Bayesian model has regularizing priors. Then, the Bayesian model is on the lower-variance (aka "simpler") side of the bias/variance trade-off than the OLS model is. But in most situations, the Bayesian regression still has more interpretation complexity.
+
+Unlike degrees of freedom complexity, interpretation complexity is context-dependent. Oftentimes, the least "interpretionally" complex method will be the one that is standard in the context. 
+
+# Takeaway
+Sometimes, reducing MSE and reducing interpretation complexity may be at odds with each other. Both of these factors need to weigh into a statistician's/data scientist's consideration of methods. Sometimes it may be worthwhile to keep things simple at the expense of the better-fit method.

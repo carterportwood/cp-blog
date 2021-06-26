@@ -3,6 +3,21 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/</loc>
+    <lastmod>2021-06-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/</loc>
+    <lastmod>2021-06-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2021/06/25/two-types-of-methodological-complexity/</loc>
+    <lastmod>2021-06-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/tags/bayesian/</loc>
     <lastmod>2020-10-01T00:00:00+00:00</lastmod>
   </url>
@@ -18,22 +33,12 @@
   </url>
   
   <url>
-    <loc>/</loc>
-    <lastmod>2020-10-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/tags/confidence-intervals/</loc>
     <lastmod>2020-10-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/2020/10/01/getting-better-binomial-confidence-intervals/</loc>
-    <lastmod>2020-10-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/</loc>
     <lastmod>2020-10-01T00:00:00+00:00</lastmod>
   </url>
   
@@ -75,10 +80,6 @@
   <url>
     <loc>/tags/statistics/</loc>
     <lastmod>2020-09-04T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/1/01/01/mad-outlier-detection/</loc>
   </url>
   
 </urlset>

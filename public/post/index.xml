@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Carter Portwood</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 01 Oct 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 25 Jun 2021 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Two Types of Methodological Complexity</title>
+      <link>/2021/06/25/two-types-of-methodological-complexity/</link>
+      <pubDate>Fri, 25 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/2021/06/25/two-types-of-methodological-complexity/</guid>
+      <description>I often see statements like, “As the complexity of the model increases, the variance will increase and bias will decrease.” This type of statement is referring to a specific type of model complexity, namely, the model’s capacity to overfit data. Below, I call this the “degrees of freedom complexity,” for lack of a better term.1
+Maybe a bit pedantically, I’ll point out that there’s another important type of complexity that is distinct from the degrees of freedom complexity, what I’ll call “interpretation complexity”.</description>
+    </item>
     
     <item>
       <title>Getting Better Binomial Confidence Intervals</title>
@@ -37,16 +47,6 @@ When constructing a binomial confidence interval, it’s rare that one has no pr
       
       <guid>/2020/09/04/comparing-binomial-confidence-interval-methods/</guid>
       <description>Binomial Confidence Intervals Are Not Simple Sometimes it can be easy to take confidence intervals for granted. They’re one of the first things you learn in statistics, and you see them everywhere. We’re so used to \(\hat{\theta} \pm 1.96 \ \hat{se}(\hat{\theta})\) that it can be surprising that something as fundamental as binomial confidence intervals is still a subject of debate and confusion. In this post, I’ll discuss some ways you can compare confidence interval methods for binomial proportions with the easy-to-use binom package in R.</description>
-    </item>
-    
-    <item>
-      <title>MAD Outlier Detection</title>
-      <link>/1/01/01/mad-outlier-detection/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/1/01/01/mad-outlier-detection/</guid>
-      <description>In this post, I show how to set the cutoff for MAD-based outlier detection. This is not meant to be an explainer about MAD outlier detection since there’s already good resources (here)[] and (here)[].
-A colleague recent came to me asking for advice about automated univarite outlier detection. I wasn’t all that familiar with outlier detection. After doing some reading, I found a method that suited our purposes well: outlier detection using the Median Absolute Deviation (MAD).</description>
     </item>
     
   </channel>
